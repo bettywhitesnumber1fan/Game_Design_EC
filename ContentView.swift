@@ -1,75 +1,121 @@
-//
-//  ContentView.swift
-//  BallGame
-//
-//  Created by Syd on 6/23/25.
-//
-
 import SwiftUI
 struct ContentView: View {
-    // State variables to track position and score
-    @State private var position = CGPoint(x: 150, y: 300)
-    @State private var score = 0
-    @State private var screenSize = CGSize.zero // For boundary awareness
+    // Game state
+    @State private var currentStep = "start"
     var body: some View {
-        GeometryReader { geometry in
-            ZStack {
-                Color.white.ignoresSafeArea()
-                // Score display and restart button at the top
-                VStack {
-                    Text("Score: \(score)")
-                        .font(.title)
-                        .padding(.top, 40)
-                    
-                    Button(
-                        action:{restartGame()}
-                    ){
-                        Text("Restart Game")
-                            .padding(8)
-                            .background(Color.green.opacity(0.8))
-                            .foregroundColor(.white)
-                            .cornerRadius(10)
+        VStack(spacing: 20) {
+            Spacer()
+            switch currentStep {
+            case "start":
+                Text("🏞️ You're at a golf course playing a par 3. What club do you use?")
+                    .multilineTextAlignment(.center)
+                HStack {
+                    gameButton("Pitching Wedge") {
+                        currentStep = "Wedge"
+                    }
+                    gameButton("Driver") {
+                        currentStep = "Drive"
+                    }
+                }
+            case "Wedge":
+                Text("You made it on the green! What club will you use next?")
+                    .multilineTextAlignment(.center)
+                HStack {
+                    gameButton("Pitching Wedge") {
+                        currentStep = "Chip"
+                    }
+                    gameButton("Putter") {
+                        currentStep = "Putt"
                         
                     }
-                    
-                    Spacer()
                 }
-                // Moving circle
+            case "Drive":
+                Text("You are removed from the course!")
                 Circle()
-                    .fill(Color.blue)
-                    .frame(width: 80, height: 80)
-                    .position(position)
-                    .onTapGesture {
-                        // Increase score and move circle to new position
-                        score += 1
-                        moveCircle(in: geometry.size)
+                    .fill(Color.red)
+                    .frame(width: 100, height: 100)
+                gameButton("Run Away") {
+                    currentStep = "start"
+                }
+            case "Putt":
+                Text("You must decide. Try to make the 100Ft putt or, play it safe.")
+                Ellipse()
+                    .fill(Color.green)
+                    .frame(width: 120, height: 60)
+                HStack {
+                    gameButton("Try to make it") {
+                        currentStep = "Try"
                     }
+                    gameButton("Play it safe") {
+                        currentStep = "Safe"
+                    }
+                }
+            case "Chip":
+                Text("You damaged the course! Pay 1000 Dollars!")
+                Circle()
+                    .fill(Color.red)
+                    .frame(width: 100, height: 100)
+                gameButton("Restart Game") {
+                    currentStep = "start"
+                }
+            case "Try":
+                Text("You missed.")
+                
+                gameButton("Try again") {
+                    currentStep = "Putt"
+                }
+                
+            case "Safe":
+                Text("You got close to the hole. Do you line your putt up?")
+                    .multilineTextAlignment(.center)
+                HStack {
+                    gameButton("Line up Putt") {
+                        currentStep = "Line"
+                    }
+                    gameButton("Yolo") {
+                        currentStep = "Yolo"
+                    }
+                }
+                
+                
+            case "Yolo":
+                Text("You missed, you got a bogey.")
+                
+                gameButton("Restart Game") {
+                    currentStep = "start"
+                }
+            
+        
+        case "Line":
+            Text("You made it, you got a Par!")
+            
+            gameButton("Restart Game") {
+                currentStep = "start"
             }
-            // Store the screen size for later use
-            .onAppear {
-                screenSize = geometry.size
+        
+        
+        
+            
+                default:
+                    Text("Game Over.")
+                }
+                Spacer()
+            }
+            .padding()
+            .font(.title3)
+        }
+        // Reusable styled button
+        func gameButton(_ label: String, action: @escaping () -> Void) -> some View {
+            Button(action: action) {
+                Text(label)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue.opacity(0.8))
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
             }
         }
     }
-    // Function to move the circle to a random screen position
-    func moveCircle(in size: CGSize) {
-        let padding: CGFloat = 40 // Prevents the circle from going offscreen
-        // Height to reserve at the top for score and button UI
-        let topReservedHeight: CGFloat = 120
-        let newX = CGFloat.random(in: padding...(size.width - padding))
-        let newY = CGFloat.random(in: padding...(size.height - padding))
-        withAnimation(.easeInOut(duration: 0.3)) {
-            position = CGPoint(x: newX, y: newY)
-        }
-    }
-    
-    func restartGame(){
-        score = 0
-        position = CGPoint(x:screenSize.width/2, y:screenSize.height/2)
-    }
-    
-
-}
 #Preview {
     ContentView()
 }

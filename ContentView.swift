@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  BallGame
 //
-//  Created by Yunting Yin on 6/16/25.
+//  Created by Syd on 6/23/25.
 //
 
 import SwiftUI

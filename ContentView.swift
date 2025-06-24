@@ -1,11 +1,24 @@
 import SwiftUI
 struct ContentView: View {
     // Game state
-    @State private var currentStep = "start"
+    @State private var currentStep = "Intro"
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 40) {
             Spacer()
             switch currentStep {
+                
+            case "Intro":
+                Text("Welcome to the golf adventure game!       You will be presented with many options during this game.")
+                Spacer()
+                Text("Vocabulary")
+                Spacer()
+                Text("-Par 3 (100-130 Yards)")
+                Text("-Driver: Made for par 4's and 5's")
+                Text("-The Green is where the flag/ pin is to complete the hole(very delicate)")
+                gameButton("Start Game"){
+                    currentStep = "start"
+                }
+            
             case "start":
                 Text("🏞️ You're at a golf course playing a par 3. What club do you use?")
                     .multilineTextAlignment(.center)
@@ -15,6 +28,14 @@ struct ContentView: View {
                     }
                     gameButton("Driver") {
                         currentStep = "Drive"
+                    }
+                }
+                
+                Spacer()
+                VStack{
+                    gameButton("back to intro"){
+                        currentStep = "Intro"
+                
                     }
                 }
             case "Wedge":
@@ -72,7 +93,7 @@ struct ContentView: View {
                     gameButton("Line up Putt") {
                         currentStep = "Line"
                     }
-                    gameButton("Yolo") {
+                    gameButton("Just go for it") {
                         currentStep = "Yolo"
                     }
                 }
@@ -112,7 +133,7 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity)
                     .background(Color.blue.opacity(0.8))
                     .foregroundColor(.white)
-                    .cornerRadius(10)
+                    .cornerRadius(20)
             }
         }
     }
